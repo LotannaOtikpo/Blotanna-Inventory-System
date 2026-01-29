@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="">
 <head>
@@ -6,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ \App\Models\Setting::where('key', 'business_name')->value('value') ?? 'Blotanna Nig Ltd' }}</title>
+    @php
+        // Centralized Settings Fetch
+        $businessName = \App\Models\Setting::getValue('business_name', 'Blotanna Nig Ltd');
+        $businessLogo = \App\Models\Setting::getValue('business_logo');
+        $currencySymbol = \App\Models\Setting::getValue('currency_symbol', '$');
+    @endphp
+
+    <title>{{ $businessName }}</title>
+    
+    @if($businessLogo)
+        <link rel="icon" href="{{ route('files.display', ['path' => $businessLogo]) }}">
+    @else
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+    @endif
 
     <!-- Theme Script (Prevent FOUC) -->
     <script>
@@ -18,7 +30,7 @@
         }
         
         // Global Currency
-        window.APP_CURRENCY = "{{ \App\Models\Setting::where('key', 'currency_symbol')->value('value') ?? '$' }}";
+        window.APP_CURRENCY = "{{ $currencySymbol }}";
     </script>
 
     <!-- Fonts -->
@@ -317,16 +329,15 @@
             <div class="flex flex-col gap-8">
                 <div class="flex items-center justify-between">
                     <div class="flex gap-3 items-center">
-                        @php $logo = \App\Models\Setting::where('key', 'business_logo')->value('value'); @endphp
-                        @if($logo)
-                            <img src="{{ route('files.display', ['path' => $logo]) }}" class="size-10 rounded-lg object-cover bg-white shrink-0 border border-gray-100 dark:border-gray-700 shadow-sm">
+                        @if($businessLogo)
+                            <img src="{{ route('files.display', ['path' => $businessLogo]) }}" class="size-10 rounded-lg object-cover bg-white shrink-0 border border-gray-100 dark:border-gray-700 shadow-sm">
                         @else
                             <div class="bg-gradient-to-br from-primary to-blue-600 rounded-lg size-10 flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/30">
                                 <span class="material-symbols-outlined">inventory_2</span>
                             </div>
                         @endif
                         <div class="flex flex-col min-w-0">
-                            <h1 class="text-base font-bold leading-none truncate">{{ \App\Models\Setting::where('key', 'business_name')->value('value') ?? 'Blotanna Nig Ltd' }}</h1>
+                            <h1 class="text-base font-bold leading-none truncate">{{ $businessName }}</h1>
                             <p class="text-[#616f89] dark:text-gray-400 text-xs mt-1">Admin Console</p>
                         </div>
                     </div>
@@ -405,7 +416,14 @@
                     <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <span class="material-symbols-outlined text-2xl">menu</span>
                     </button>
-                    <span class="font-bold text-lg text-gray-900 dark:text-white truncate max-w-[200px]">{{ \App\Models\Setting::where('key', 'business_name')->value('value') ?? 'Blotanna Nig Ltd' }}</span>
+                    @if($businessLogo)
+                         <img src="{{ route('files.display', ['path' => $businessLogo]) }}" class="size-8 rounded-lg object-cover bg-white shrink-0 border border-gray-100 dark:border-gray-700 shadow-sm">
+                    @else
+                        <div class="bg-gradient-to-br from-primary to-blue-600 rounded-lg size-8 flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/30">
+                            <span class="material-symbols-outlined text-sm">inventory_2</span>
+                        </div>
+                    @endif
+                    <span class="font-bold text-lg text-gray-900 dark:text-white truncate max-w-[200px]">{{ $businessName }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                      <img src="{{ Auth::user()->profile_photo_url }}" class="size-8 rounded-full bg-gray-200 object-cover shrink-0">
