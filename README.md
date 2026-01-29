@@ -1,59 +1,66 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<!-- 
+# Inventory and Sales Tracking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Organization:** Blotanna Nigeria Limited  
+**Location:** Abuja, Federal Capital Territory, Nigeria
 
-## About Laravel
+## 📖 Project Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This **Inventory and Sales Tracking System** is a web-based application developed to solve the challenges of manual record-keeping. It allows the organization to move away from inefficient notebooks to a digital platform where they can record products, process sales, and track profits accurately.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The system is built using **Laravel 10**, employing a modern tech stack to ensure security, speed, and ease of use.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ⚡ Key Features
 
-## Learning Laravel
+*   **Dashboard:** Real-time overview of total revenue, orders, and low-stock alerts.
+*   **Inventory Management:** Add, edit, and delete products with image support and stock tracking.
+*   **Point of Sale (POS):** A dynamic interface for processing sales quickly using a digital cart.
+*   **Invoicing:** Generate, print, and email professional invoices to customers.
+*   **Reporting:** Visual charts and detailed tables showing sales history and performance.
+*   **Security:** Secure user authentication and activity logging.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠 Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+*   **Backend:** PHP (Laravel 10 Framework)
+*   **Frontend:** Tailwind CSS, Alpine.js, Blade Templates
+*   **Database:** MySQL
+*   **Tools:** Vite, Composer, NPM
 
-## Laravel Sponsors
+## 🚀 Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    ```
+2.  **Install PHP dependencies:**
+    ```bash
+    composer install
+    ```
+3.  **Install Frontend dependencies:**
+    ```bash
+    npm install && npm run build
+    ```
+4.  **Configure Environment:**
+    ```bash
+    cp .env.example .env
+    # Update DB_DATABASE, DB_USERNAME, DB_PASSWORD in .env
+    php artisan key:generate
+    ```
+5.  **Run Migrations:**
+    ```bash
+    php artisan migrate --seed
+    ```
+6.  **Start Application:**
+    ```bash
+    php artisan serve
+    ```
 
-### Premium Partners
+## 👨‍💻 Skill Outcome
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Through this project, practical skills were applied in:
+*   **Laravel Web Development:** Setting up routes, controllers, and views.
+*   **Database Design:** Structuring relational tables for Products, Sales, and Invoices.
+*   **CRUD Operations:** Creating, Reading, Updating, and Deleting database records.
+*   **Form Validation:** Ensuring data integrity before storage.
+*   **Frontend Logic:** Using Alpine.js for reactive interfaces. 
+-->
