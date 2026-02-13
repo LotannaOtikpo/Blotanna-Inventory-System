@@ -120,34 +120,54 @@ class InvoiceController extends Controller
         $oldStatus = $invoice->status;
         $newStatus = $request->status;
 
+        // CASE 1: Marking as PAID
         if ($newStatus === 'paid' && $oldStatus !== 'paid') {
             try {
                 DB::beginTransaction();
 
-                $sale = Sale::create([
-                    'transaction_id' => $invoice->invoice_number,
-                    'total_amount' => $invoice->total_amount,
-                    'tax_amount' => $invoice->tax_amount,
-                    'payment_method' => 'bank_transfer',
-                    'user_id' => Auth::id() ?? 1,
-                    'status' => 'paid',
-                    'customer_name' => $invoice->customer->name,
-                    'customer_email' => $invoice->customer->email,
-                    'customer_phone' => $invoice->customer->phone,
-                    'created_at' => now(),
-                ]);
+                // Check for existing transaction to prevent duplicates
+                $existingSale = Sale::withTrashed()->where('transaction_id', $invoice->invoice_number)->first();
 
-                foreach ($invoice->items as $invItem) {
-                    if ($invItem->product_id) {
-                        $product = Product::lockForUpdate()->find($invItem->product_id);
-                        if ($product) {
-                            $product->decrement('quantity', $invItem->quantity);
-                            SaleItem::create([
-                                'sale_id' => $sale->id,
-                                'product_id' => $product->id,
-                                'quantity' => $invItem->quantity,
-                                'price' => $invItem->unit_price,
-                            ]);
+                if ($existingSale) {
+                    // Restore if deleted and ensure status is paid
+                    if ($existingSale->trashed()) {
+                        $existingSale->restore();
+                    }
+                    $existingSale->update([
+                        'status' => 'paid', 
+                        'total_amount' => $invoice->total_amount,
+                        'user_id' => Auth::id() ?? $existingSale->user_id,
+                        'updated_at' => now()
+                    ]);
+                    // Note: Stock is not deducted again as it is assumed to have been deducted 
+                    // when the sale was originally created or managed separately.
+                } else {
+                    // Create new Sale and deduct stock
+                    $sale = Sale::create([
+                        'transaction_id' => $invoice->invoice_number,
+                        'total_amount' => $invoice->total_amount,
+                        'tax_amount' => $invoice->tax_amount,
+                        'payment_method' => 'bank_transfer',
+                        'user_id' => Auth::id() ?? 1,
+                        'status' => 'paid',
+                        'customer_name' => $invoice->customer->name,
+                        'customer_email' => $invoice->customer->email,
+                        'customer_phone' => $invoice->customer->phone,
+                        'created_at' => now(),
+                    ]);
+
+                    foreach ($invoice->items as $invItem) {
+                        if ($invItem->product_id) {
+                            $product = Product::lockForUpdate()->find($invItem->product_id);
+                            if ($product) {
+                                $product->decrement('quantity', $invItem->quantity);
+                                SaleItem::create([
+                                    'sale_id' => $sale->id,
+                                    'product_id' => $product->id,
+                                    'quantity' => $invItem->quantity,
+                                    'price' => $invItem->unit_price,
+                                ]);
+                            }
                         }
                     }
                 }
@@ -157,20 +177,29 @@ class InvoiceController extends Controller
                 ActivityLog::create([
                     'user_id' => Auth::id(),
                     'action' => 'Invoice Paid',
-                    'description' => "Marked invoice #{$invoice->invoice_number} as Paid. Stock updated.",
+                    'description' => "Marked invoice #{$invoice->invoice_number} as Paid.",
                     'ip_address' => $request->ip()
                 ]);
 
                 DB::commit();
                 
-                return back()->with('success', 'Invoice marked as Paid. Revenue recorded and stock updated.');
+                return back()->with('success', 'Invoice marked as Paid. Revenue recorded.');
 
             } catch (\Exception $e) {
                 DB::rollBack();
                 return back()->with('error', 'Error updating status: ' . $e->getMessage());
             }
         }
+        
+        // CASE 2: Marking FROM Paid TO something else (Reverse/Cancel)
+        if ($oldStatus === 'paid' && $newStatus !== 'paid') {
+            $sale = Sale::where('transaction_id', $invoice->invoice_number)->first();
+            if ($sale) {
+                $sale->delete(); // Soft delete the sale to remove from revenue reports
+            }
+        }
 
+        // Default: Update Status
         $invoice->update(['status' => $newStatus]);
         
         ActivityLog::create([
